@@ -2,5 +2,6 @@
     <string name="app_name">InstagramClone</string>
     <string name="prompt_email">User name goes here</string>
     <string name="password_goes_here">Password goes here</string>
-    <string name="sign_in_or_register">Sign in or register</string>
+    <string name="sign_in">Log in</string>
+    <string name="sign_up">Sign up</string>
 </resources>

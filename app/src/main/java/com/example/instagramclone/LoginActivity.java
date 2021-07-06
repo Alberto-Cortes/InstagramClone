@@ -13,6 +13,7 @@ import android.widget.Toast;
 import com.parse.LogInCallback;
 import com.parse.ParseException;
 import com.parse.ParseUser;
+import com.parse.SignUpCallback;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -21,20 +22,26 @@ public class LoginActivity extends AppCompatActivity {
     // Declaration of logic part of visual elements
     private EditText etUsername;
     private EditText etPassword;
-    private Button btLogin;
+    private Button btnLogin;
+    private Button btnSignup;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        if (ParseUser.getCurrentUser() != null){
+            goToPostsActivity();
+        }
+
         // Connect logic and visual parts of layout
         etUsername = findViewById(R.id.username);
         etPassword = findViewById(R.id.password);
-        btLogin = findViewById(R.id.btnLogin);
+        btnLogin = findViewById(R.id.btnLogin);
+        btnSignup = findViewById(R.id.btnSignup);
 
         // Click handler for login button
-        btLogin.setOnClickListener(new View.OnClickListener() {
+        btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // Get text from the views and pass it to login method
@@ -42,6 +49,25 @@ public class LoginActivity extends AppCompatActivity {
                 String password = etPassword.getText().toString();
                 loginUser(username, password);
                 Toast.makeText(LoginActivity.this, "Toast message", Toast.LENGTH_LONG).show();
+            }
+        });
+        btnSignup.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ParseUser user = new ParseUser();
+                user.setUsername(etUsername.getText().toString());
+                user.setPassword(etPassword.getText().toString());
+
+                user.signUpInBackground(new SignUpCallback() {
+                    @Override
+                    public void done(ParseException e) {
+                        if (e == null){
+                            goToPostsActivity();
+                        } else  {
+                            Log.e(TAG, "Parse signup error", e);
+                        }
+                    }
+                });
             }
         });
     }
@@ -57,9 +83,14 @@ public class LoginActivity extends AppCompatActivity {
                     return;
                 }
                 // No issues, launch posts activity
-                Intent i = new Intent(LoginActivity.this, PostsActivity.class);
-                startActivity(i);
+                goToPostsActivity();
             }
         });
+    }
+
+    private void goToPostsActivity() {
+        Intent i = new Intent(LoginActivity.this, PostsActivity.class);
+        startActivity(i);
+        finish();
     }
 }
