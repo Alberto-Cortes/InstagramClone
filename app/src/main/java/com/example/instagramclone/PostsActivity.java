@@ -42,6 +42,7 @@ public class PostsActivity extends AppCompatActivity {
     private ImageView ivPostImage;
     private Button btnSubmit;
     private Button btnCapture;
+    private Button btnFeed;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,8 +54,7 @@ public class PostsActivity extends AppCompatActivity {
         btnSubmit = findViewById(R.id.btnSubmit);
         btnCapture = findViewById(R.id.btnCapture);
         ivPostImage = findViewById(R.id.ivPostImage);
-        
-        queryPosts();
+        btnFeed = findViewById(R.id.btnFeed);
 
         // Give logout button functionality by logging user out and returning to LoginActivity
         btnLogout.setOnClickListener(new View.OnClickListener() {
@@ -86,6 +86,13 @@ public class PostsActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 launchCamera();
+            }
+        });
+        btnFeed.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(PostsActivity.this, FeedActivity.class);
+                startActivity(i);
             }
         });
     }
@@ -163,29 +170,5 @@ public class PostsActivity extends AppCompatActivity {
         });
         etPostDescription.setText("");
         ivPostImage.setImageResource(0);
-    }
-
-    // Query posts from the DB
-    private void queryPosts() {
-        // Define a query for posts object
-        ParseQuery<Post> query = ParseQuery.getQuery(Post.class);
-        query.include(Post.KEY_USER);
-        // Find posts using the query
-        query.findInBackground(new FindCallback<Post>() {
-            @Override
-            public void done(List<Post> objects, ParseException e) {
-                // Check for errors on query's answer
-                if (e != null){
-                    Log.e(TAG, "Parse query error", e);
-                    return;
-                }
-                // If no error is present, loop through posts
-                for (Post post : objects){
-                    // TODO: Do something with the posts
-
-                }
-            }
-        });
-
     }
 }
