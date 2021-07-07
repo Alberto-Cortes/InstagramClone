@@ -30,6 +30,7 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        // If user has logged in already launch PostsActivity directly
         if (ParseUser.getCurrentUser() != null){
             goToPostsActivity();
         }
@@ -47,23 +48,26 @@ public class LoginActivity extends AppCompatActivity {
                 // Get text from the views and pass it to login method
                 String username = etUsername.getText().toString();
                 String password = etPassword.getText().toString();
-                loginUser(username, password);
-                Toast.makeText(LoginActivity.this, "Toast message", Toast.LENGTH_LONG).show();
-            }
+                loginUser(username, password); }
         });
+        // Click handler for signup button
         btnSignup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // Create a new user from the input on the text boxes
                 ParseUser user = new ParseUser();
                 user.setUsername(etUsername.getText().toString());
                 user.setPassword(etPassword.getText().toString());
 
+                // Attempt user signup
                 user.signUpInBackground(new SignUpCallback() {
                     @Override
                     public void done(ParseException e) {
                         if (e == null){
+                            // If signup was successful, launch PostsActivity
                             goToPostsActivity();
-                        } else  {
+                        } else {
+                            // Handle signup exception
                             Log.e(TAG, "Parse signup error", e);
                         }
                     }
@@ -72,7 +76,7 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
-    // Method to check Parse for valid login user
+    // Method to check Parse for valid user login
     private void loginUser(String username, String password) {
         ParseUser.logInInBackground(username, password, new LogInCallback() {
             @Override
@@ -82,12 +86,13 @@ public class LoginActivity extends AppCompatActivity {
                     Log.e(TAG, "Parse login error", e);
                     return;
                 }
-                // No issues, launch posts activity
+                // No issues, launch PostsActivity
                 goToPostsActivity();
             }
         });
     }
 
+    // Launch posts activity
     private void goToPostsActivity() {
         Intent i = new Intent(LoginActivity.this, PostsActivity.class);
         startActivity(i);
