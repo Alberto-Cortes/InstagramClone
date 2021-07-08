@@ -1,7 +1,6 @@
 package com.example.instagramclone;
 
 import android.content.Context;
-import android.media.Image;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,14 +17,22 @@ import java.util.List;
 
 public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> {
 
+    // Listener for post interactions
+    public interface PostInteractionListener {
+        void onPostImageClick(int position);
+    }
+
+    PostInteractionListener listener;
+
     // Context and items for the RV
     Context context;
     List<Post> posts;
 
     // Constructor fot the adapter
-    public PostsAdapter(Context context, List<Post> posts) {
+    public PostsAdapter(Context context, List<Post> posts, PostInteractionListener postInteractionListener) {
         this.context = context;
         this.posts = posts;
+        this.listener = postInteractionListener;
     }
 
     // Inflate layout for each row when created
@@ -75,6 +82,13 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> 
             if (image != null) {
                 Glide.with(context).load(image.getUrl()).into(ivImage);
             }
+            ivImage.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //PostInteractionListener
+                    listener.onPostImageClick(getAdapterPosition());
+                }
+            });
         }
     }
 }

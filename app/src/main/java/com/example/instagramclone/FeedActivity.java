@@ -5,6 +5,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -12,10 +13,12 @@ import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
 
+import org.parceler.Parcels;
+
 import java.util.ArrayList;
 import java.util.List;
 
-public class FeedActivity extends AppCompatActivity {
+public class FeedActivity extends AppCompatActivity implements PostsAdapter.PostInteractionListener {
 
     public final String TAG = this.getClass().getSimpleName();
 
@@ -35,7 +38,7 @@ public class FeedActivity extends AppCompatActivity {
         // Define posts as an empty array
         posts = new ArrayList<>();
         // Define the adapter for the RV, pass empty array of posts
-        adapter = new PostsAdapter(this, posts);
+        adapter = new PostsAdapter(this, posts, this);
         // Set the RV adapter with the one just created
         rvPosts.setAdapter(adapter);
         // Set a layout for the RV
@@ -85,5 +88,15 @@ public class FeedActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    // Implementation of click listener for the post
+    @Override
+    public void onPostImageClick(int position) {
+        Post post = posts.get(position);
+        Intent i = new Intent(this, PostDetailActivity.class);
+        i.putExtra("post", Parcels.wrap(post));
+        //dialogFragment(Parcels.wrap(Post));
+        startActivity(i);
     }
 }
