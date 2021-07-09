@@ -16,6 +16,7 @@ import com.parse.ParseQuery;
 import org.parceler.Parcels;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class FeedActivity extends AppCompatActivity implements PostsAdapter.PostInteractionListener {
@@ -27,6 +28,7 @@ public class FeedActivity extends AppCompatActivity implements PostsAdapter.Post
     PostsAdapter adapter;
     List<Post> posts;
     SwipeRefreshLayout swipeRefreshLayout;
+    EndlessRecyclerViewScrollListener scrollListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,11 +43,25 @@ public class FeedActivity extends AppCompatActivity implements PostsAdapter.Post
         adapter = new PostsAdapter(this, posts, this);
         // Set the RV adapter with the one just created
         rvPosts.setAdapter(adapter);
+
+
         // Set a layout for the RV
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
-        linearLayoutManager.setReverseLayout(true);
-        linearLayoutManager.setStackFromEnd(true);
+
         rvPosts.setLayoutManager(linearLayoutManager);
+
+        // Define endless scroll listener
+        scrollListener = new EndlessRecyclerViewScrollListener(linearLayoutManager) {
+            @Override
+            public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
+                // Triggered only when new data needs to be appended to the list
+                // Add whatever code is needed to append new items to the bottom of the list
+                queryWhereLessThan(posts.get(totalItemsCount-1).getCreatedAt());
+            }
+        };
+
+        // Add endless scroll listener to the RV
+        rvPosts.addOnScrollListener(scrollListener);
 
         // Query posts from the DB
         queryPosts();
@@ -69,7 +85,9 @@ public class FeedActivity extends AppCompatActivity implements PostsAdapter.Post
         // Include data of self user
         query.include(Post.KEY_USER);
         // Limit quantity of items to be retrieved
-        query.setLimit(20);
+        query.setLimit(1);
+        // Order posts by date
+        query.addDescendingOrder("createdAt");
         // Find posts using the query
         query.findInBackground(new FindCallback<Post>() {
             @Override
@@ -88,6 +106,35 @@ public class FeedActivity extends AppCompatActivity implements PostsAdapter.Post
             }
         });
 
+    }
+    // Method to query posts that are older than the oldest already stored
+    private void queryWhereLessThan(Date createdAt){
+        Log.i(TAG, "queryWhereLessThan: bruh");
+        // Define a query for posts object
+        ParseQuery<Post> query = ParseQuery.getQuery(Post.class);
+        // Include data of self user
+        query.include(Post.KEY_USER);
+        // Limit quantity of items to be retrieved
+        query.setLimit(1);
+        // Order posts by date
+        query.addDescendingOrder("createdAt");
+        // Only search for older posts
+        query.whereLessThan("createdAt", createdAt);
+        // Find posts using the query
+        query.findInBackground(new FindCallback<Post>() {
+            @Override
+            public void done(List<Post> objects, ParseException e) {
+                // Check for errors on query's answer
+                if (e != null){
+                    Log.e(TAG, "Parse query error", e);
+                    return;
+                }
+                // Add older posts to array
+                posts.addAll(objects);
+                adapter.notifyDataSetChanged();
+                scrollListener.resetState();
+            }
+        });
     }
 
     // Implementation of click listener for the post
