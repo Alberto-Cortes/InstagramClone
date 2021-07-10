@@ -65,6 +65,7 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> 
         TextView tvUsername;
         ImageView ivImage;
         TextView tvDescription;
+        TextView tvPostTimestamp;
 
         // Match visual and logic counterparts
         public ViewHolder(@NonNull View itemView) {
@@ -72,12 +73,14 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> 
             tvUsername = itemView.findViewById(R.id.tvUsername);
             tvDescription = itemView.findViewById(R.id.tvDescription);
             ivImage = itemView.findViewById(R.id.ivImage);
+            tvPostTimestamp = itemView.findViewById(R.id.tvPostTimestamp);
         }
 
         // Extract data from post and bind it to a row
         public void bind(Post post) {
             tvDescription.setText(post.getDescription());
             tvUsername.setText(post.getUser().getUsername());
+            tvPostTimestamp.setText(post.dateToTimestamp(post.getCreatedAt()));
             ParseFile image = post.getImage();
             if (image != null) {
                 Glide.with(context).load(image.getUrl()).into(ivImage);
