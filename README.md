@@ -1,4 +1,4 @@
-# Project 4 - *InstagraClone*
+# Project 4 - *InstagramClone*
 
 **InstagramCline** is a photo sharing app using Parse as its backend.
 
@@ -28,7 +28,7 @@ The following **stretch** features are implemented:
 - [ ] Feed Tab (to view all posts from all users)
 - [ ] Capture Tab (to make a new post using the Camera and Photo Gallery)
 - [ ] Profile Tab (to view only the current user's posts, in a grid)
-- [ ] Show the username and creation time for each post
+- [x] Show the username and creation time for each post
 - User Profiles:
 - [ ] Allow the logged in user to add a profile photo
 - [ ] Display the profile photo with each post
