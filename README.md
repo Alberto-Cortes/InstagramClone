@@ -1,4 +1,4 @@
-# Project 4 - *InstagraClone*
+# Project 4 - *InstagramClone*
 
 **InstagramCline** is a photo sharing app using Parse as its backend.
 
